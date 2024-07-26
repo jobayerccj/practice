@@ -16,7 +16,7 @@ class PostService
     ) {
     }
 
-    public function savePost(array $requestData)
+    public function savePost(array $requestData): int
     {
         $post = new Post();
         $post->setTitle($requestData['title'] ?? '');
@@ -27,5 +27,7 @@ class PostService
         $this->validator->validateData($post);
         $this->entityManager->persist($post);
         $this->entityManager->flush();
+
+        return $post->getId();
     }
 }
