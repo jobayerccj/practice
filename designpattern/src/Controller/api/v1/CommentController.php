@@ -14,7 +14,7 @@ use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Component\Validator\Exception\ValidationFailedException;
 
-#[Route('/api')]
+#[Route('/api/v1')]
 class CommentController extends BaseController
 {
     #[Route('/comments', name: 'comments', methods: ['POST'])]

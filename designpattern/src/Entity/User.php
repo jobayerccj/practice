@@ -2,6 +2,7 @@
 
 namespace App\Entity;
 
+use App\Contract\Supportable;
 use App\Repository\UserRepository;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
@@ -12,7 +13,7 @@ use Symfony\Component\Security\Core\User\UserInterface;
 #[ORM\Entity(repositoryClass: UserRepository::class)]
 #[ORM\Table(name: '`user`')]
 #[ORM\UniqueConstraint(name: 'UNIQ_IDENTIFIER_EMAIL', fields: ['email'])]
-class User implements UserInterface, PasswordAuthenticatedUserInterface
+class User implements UserInterface, PasswordAuthenticatedUserInterface, Supportable
 {
     #[ORM\Id]
     #[ORM\GeneratedValue]
@@ -45,6 +46,9 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
      */
     #[ORM\OneToMany(targetEntity: Comment::class, mappedBy: 'commentedBy', orphanRemoval: true)]
     private Collection $comments;
+
+    #[ORM\Column(nullable: true)]
+    private ?int $reputation = null;
 
     public function __construct()
     {
@@ -185,5 +189,22 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
         }
 
         return $this;
+    }
+
+    public function getReputation(): ?int
+    {
+        return $this->reputation;
+    }
+
+    public function setReputation(?int $reputation): static
+    {
+        $this->reputation = $reputation;
+
+        return $this;
+    }
+
+    public function support()
+    {
+        $this->reputation++;
     }
 }

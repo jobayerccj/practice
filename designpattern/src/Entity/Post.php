@@ -2,6 +2,7 @@
 
 namespace App\Entity;
 
+use App\Contract\Supportable;
 use App\Repository\PostRepository;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
@@ -10,7 +11,7 @@ use Doctrine\ORM\Mapping as ORM;
 use Symfony\Component\Validator\Constraints as Assert;
 
 #[ORM\Entity(repositoryClass: PostRepository::class)]
-class Post
+class Post implements Supportable
 {
     #[ORM\Id]
     #[ORM\GeneratedValue]
@@ -41,6 +42,9 @@ class Post
      */
     #[ORM\OneToMany(targetEntity: Comment::class, mappedBy: 'commentedOn', orphanRemoval: true)]
     private Collection $comments;
+
+    #[ORM\Column(nullable: true)]
+    private ?int $reputation = null;
 
     public function __construct()
     {
@@ -140,5 +144,22 @@ class Post
         }
 
         return $this;
+    }
+
+    public function getReputation(): ?int
+    {
+        return $this->reputation;
+    }
+
+    public function setReputation(?int $reputation): static
+    {
+        $this->reputation = $reputation;
+
+        return $this;
+    }
+
+    public function support()
+    {
+        $this->reputation++;
     }
 }
