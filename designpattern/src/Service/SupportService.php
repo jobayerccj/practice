@@ -6,7 +6,6 @@ use App\Factories\SupportableFactory;
 use App\Repository\PostRepository;
 use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\ORM\EntityNotFoundException;
-use Exception;
 
 class SupportService
 {
@@ -16,10 +15,9 @@ class SupportService
 
     public function support(array $requestData)
     {
-
         $post = $this->postRepository->findOneBy(['id' => $requestData['post_id']]);
         if (is_null($post)) {
-            throw new EntityNotFoundException("asdasda");
+            throw new EntityNotFoundException("No post found");
         }
 
         $supportableClass = $this->supportableFactory->getSupportable($post);

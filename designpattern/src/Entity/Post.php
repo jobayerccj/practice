@@ -46,9 +46,16 @@ class Post implements Supportable
     #[ORM\Column(nullable: true)]
     private ?int $reputation = null;
 
+    /**
+     * @var Collection<int, Review>
+     */
+    #[ORM\OneToMany(targetEntity: Review::class, mappedBy: 'post', orphanRemoval: true)]
+    private Collection $reviews;
+
     public function __construct()
     {
         $this->comments = new ArrayCollection();
+        $this->reviews = new ArrayCollection();
     }
 
     public function getId(): ?int
@@ -161,5 +168,35 @@ class Post implements Supportable
     public function support()
     {
         $this->reputation++;
+    }
+
+    /**
+     * @return Collection<int, Review>
+     */
+    public function getReviews(): Collection
+    {
+        return $this->reviews;
+    }
+
+    public function addReview(Review $review): static
+    {
+        if (!$this->reviews->contains($review)) {
+            $this->reviews->add($review);
+            $review->setPost($this);
+        }
+
+        return $this;
+    }
+
+    public function removeReview(Review $review): static
+    {
+        if ($this->reviews->removeElement($review)) {
+            // set the owning side to null (unless already changed)
+            if ($review->getPost() === $this) {
+                $review->setPost(null);
+            }
+        }
+
+        return $this;
     }
 }
